@@ -7,5 +7,10 @@ pipeline {
                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/piyushmj12/golden_image_packer']]])
             }
         }
+        stage("Running for packer template){
+            step {
+                echo "Running packer template"
+            }
+        }
     }
 }
