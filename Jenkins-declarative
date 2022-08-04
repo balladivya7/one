@@ -8,7 +8,7 @@ pipeline {
             }
         }
         stage("Running for packer template"){
-            step {
+            steps {
                 echo "Running packer template"
             }
         }
