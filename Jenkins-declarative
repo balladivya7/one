@@ -2,22 +2,47 @@ pipeline {
     agent any
 
     stages {
-        stage('Git Checkout') {
+        stage("Parameter selection"){
+         steps{
+           script{
+                properties([
+                        parameters([
+                            choice(
+                                choices: ['AWS', 'AZURE','OCI'],
+                                name: 'Cloud_Provider',
+                                 description: 'Please select appropriate cloud provider'
+                            ),
+                             choice(
+                                choices: ['JAVA', 'Python','Docker'],
+                                name: 'Template',
+                                description: 'Please select appropriate template'
+                            )
+                        ])
+                     ])
+                echo "Cloud Provider: ${params.Cloud_Provider}"
+           echo "Selected template: ${params.Template}"
+           }
+         }
+       }
+        stage('Clone to Packer Repo') {
+            steps {
+                git branch: 'main', url: 'https://github.com/piyushmj12/golden_image_packer'
+            }
+        }
+        stage('Checkout') {
             steps {
                 checkout([$class: 'GitSCM', branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/piyushmj12/golden_image_packer']]])
             }
         }
         stage("Running for packer template"){
-             steps{
-                withCredentials([[
-                    $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'aws-jenkins-demo',
-                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]){
-                          echo"Running packer template"
-
-                }
-            }
+           steps {
+    sh """pwd
+    dir('blob/main/aws/templates/aws_ami.pkr.hcl') {
+      Packer Build
+      pwd"""
+    }
+    
+}
         }
     }
 }
