@@ -38,9 +38,9 @@ pipeline {
         stage("Running for packer template"){
            steps {
     
-    }
+           }
     
-}
         }
+        
     }
 }
