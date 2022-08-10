@@ -37,7 +37,10 @@ pipeline {
         
         stage("Running for packer template"){
            steps {
-    
+                sh"""
+                pwd
+                cd aws/templates
+                pwd
            }
     
         }
